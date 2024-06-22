@@ -7,7 +7,7 @@ function Home() {
       id: "12d3as11d2a",
       name: "Carlos",
       age: 40,
-      email: "carlinhovrau@",
+      email: "carlinhovrau@email",
     },
     {
       id: "321314556112312",
