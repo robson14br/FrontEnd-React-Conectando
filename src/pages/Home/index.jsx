@@ -1,40 +1,65 @@
+import { useEffect, useState, useRef } from "react";
 import "./style.css";
 import Trash from "../../assets/trash.svg";
+import api from "../../services/api";
 
 function Home() {
-  const users = [
-    {
-      id: "12d3as11d2a",
-      name: "Carlos",
-      age: 40,
-      email: "carlinhovrau@email",
-    },
-    {
-      id: "321314556112312",
-      name: "Caique",
-      age: 14,
-      email: "pinguin@email",
-    },
-  ];
+  const [users, setUsers] = useState([]);
+  const inputName = useRef();
+  const inputAge = useRef();
+  const inputEmail = useRef();
+
+
+  async function getUsers() {
+    const usersFromApi = await api.get("/usuarios");
+    setUsers(usersFromApi.data);
+    console.log(users);
+  }
+
+  async function createUsers() {
+    await api.post("/usuarios", {
+      name: inputName.current.value,
+      age: inputAge.current.value,
+      email: inputEmail.current.value
+    });
+    getUsers();
+  }
+
+  async function deleteUsers(id) {
+    await api.delete(`/usuarios/${id}`);
+    getUsers()
+    
+  }
+
+
+  useEffect(() => {
+    getUsers();
+  }, []);
 
   return (
     <div className="conteiner">
       <form>
         <h1>Cadastro de Usuario</h1>
-        <input placeholder="Nome" name="nome" type="text" />
-        <input placeholder="Idade" name="idade" type="number" />
-        <input placeholder="Email" name="email" type="email" />
-        <button type="button">Cadastrar</button>
+        <input placeholder="Nome" name="nome" type="text" ref={inputName}/>
+        <input placeholder="Idade" name="idade" type="number" ref={inputAge}/>
+        <input placeholder="Email" name="email" type="email" ref={inputEmail}/>
+        <button type="button" onClick={createUsers}>Cadastrar</button>
       </form>
-      
+
       {users.map((user) => (
         <div key={user.id} className="card ">
           <div>
-            <p>Nome: <span>{user.name}</span></p>
-            <p>Idade: <span>{user.age}</span></p>
-            <p>Email: <span>{user.email}</span></p>
+            <p>
+              Nome: <span>{user.name}</span>
+            </p>
+            <p>
+              Idade: <span>{user.age}</span>
+            </p>
+            <p>
+              Email: <span>{user.email}</span>
+            </p>
           </div>
-          <button>
+          <button onClick={() => deleteUsers(user.id)}>
             <img src={Trash} />
           </button>
         </div>
